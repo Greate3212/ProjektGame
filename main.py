@@ -13,6 +13,8 @@ def start():
     return gui  # Zwraca utworzony obiekt GUI
 
 
+resolutions = ["800x600", "1024x768", "1280x720", "1920x1080"]
+resolution_dropdown = None
 opened = 0
 """
 Opened - zmienna przechowująca informacje jakie okno aktualnie jest otwarte:
@@ -42,8 +44,8 @@ def game_start():
     print("START!")
 
 
-def change_settings(a):
-    window.toggle_fullscreen("")
+def toggle_fullscreen(a):
+    window.toggle_fullscreen()
     pygame.time.delay(200)
     settings()
     window.screen.fill((0, 0, 0))
@@ -51,14 +53,35 @@ def change_settings(a):
     window.refresh_screen()
 
 
+def change_resolution(resolution: str):
+    """
+    Funkcja wywoływana po wybraniu nowej rozdzielczości z listy.
+
+    :param resolution: Wybrana rozdzielczość (np. "800x600").
+    :type resolution: str
+    """
+    width, height = map(int, resolution.split("x"))  # Rozdziela string na szerokość i wysokość
+    window.change_resolution(width, height)
+    if resolution_dropdown:
+        resolution_dropdown.set_selected_option(resolution)
+    pygame.time.delay(200)
+    window.screen.fill((0, 0, 0))
+    main_menu_handler.draw_all()
+    window.refresh_screen()
+    settings()
+
+
 def settings():
-    global opened
+    global opened, resolution_dropdown
     opened = 1
     # Funkcja wywoływana po wsciśnięciu przycisku 'settings' w menu głównym
     main_menu_handler.clear_all()  # Wyczyść stare elementy
     main_menu_handler.add_label("Settings", get_center_x(150), get_y_res(550), 150, 100, font_size=55,
                                 font_name="Comic Sans MS")
-    main_menu_handler.add_checkbox("Fullscreen", get_center_x(200), get_y_res(450), callback=change_settings)
+    main_menu_handler.add_checkbox("Fullscreen", get_center_x(200), get_y_res(450), callback=toggle_fullscreen)
+    main_menu_handler.add_label("Resolutions: ", get_center_x(100) - 70, get_y_res(420), 100, 40)
+    resolution_dropdown = main_menu_handler.add_dropdown(resolutions, get_center_x(100) + 70, get_y_res(420), 100, 40,
+                                                         selected_option_callback=change_resolution)
     main_menu_handler.add_button("Back", get_center_x(150), get_y_res(80), 150, 70, main_menu)
 
 
@@ -80,7 +103,6 @@ if __name__ == "__main__":
     # Obiekt odpowiedzialny za elementy GUI
     main_menu_handler = GUIHandler(window)  # Tworzy obiekt GUIHandler, który zarządza elementami GUI w oknie
 
-    settings_handler = None
     # Dodawnie elemntów GUI main menu
     main_menu()
 

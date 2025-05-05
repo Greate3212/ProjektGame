@@ -51,15 +51,30 @@ class GUI:
         pygame.quit()  # Zamknięcie Pygame
         sys.exit()  # Zamknięcie programu
 
-    def toggle_fullscreen(self, a) -> None:
-        # TODO: Dodać type hinting dla argumentu 'a' (event?) Zmienna, a zwraca pozycje check boxa (włączony, wyłączony)
+    def change_resolution(self, width: int, height: int) -> None:
         """
-        Przełącza między trybem pełnoekranowym a oknem.
+        Zmienia rozdzielczość okna gry.
+
+        :param width: Nowa szerokość okna.
+        :type width: int
+        :param height: Nowa wysokość okna.
+        :type height: int
         """
-        self.fullscreen = not self.fullscreen  # Zmiana stanu flagi fullscreen
+
+        self.width = width
+        self.height = height
+
         if self.fullscreen:
-            # Ustawienie trybu pełnoekranowego
+            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # Pełny ekran
+        else:
+            self.screen = pygame.display.set_mode((self.width, self.height))  # Okno
+        pygame.display.set_caption(self.window_name)  # Ustawienie napisu okna po zmianie rozmiaru
+
+    def toggle_fullscreen(self) -> None:
+        """Przełącza między trybem pełnoekranowym a oknem."""
+        self.fullscreen = not self.fullscreen  # Zmienia stan flagi
+        if self.fullscreen:
             self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         else:
-            # Ustawienie trybu oknowego
             self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption(self.window_name)  # Ustawienie napisu okna po zmianie trybu
