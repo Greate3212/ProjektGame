@@ -1,4 +1,6 @@
 # Import biblioteki odpowiedzialnej za GUI
+import sys
+
 import pygame
 
 
@@ -55,3 +57,4 @@ class GUI:
         """
         self.running = False  # Ustawia flagę uruchomienia na False, wskazując, że GUI ma zostać zamknięte
         pygame.quit()  # Zamyka bibliotekę Pygame
+        sys.exit() # Wyłącza grę
