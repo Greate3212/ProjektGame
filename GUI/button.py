@@ -1,55 +1,69 @@
-# Import biblioteki odpowiedzialnej za GUI
 import pygame
-
 
 class Button:
     """
     Klasa odpowiedzialna za tworzenie przycisku
     """
-    # Konstruktor
-    def __init__(self, text, x, y, width, height, callback):
+
+    def __init__(self, text, x, y, width, height, callback, color=(134, 207, 146), hover_color_offset=30, clicked_color_offset=60):
         """
         Inicjalizuje obiekt przycisku.
-
-        :param text: Tekst wyświetlany na przycisku.
-        :type text: str
-        :param x: Pozycja x lewego górnego rogu przycisku.
-        :type x: int
-        :param y: Pozycja y lewego górnego rogu przycisku.
-        :type y: int
-        :param width: Szerokość przycisku.
-        :type width: int
-        :param height: Wysokość przycisku.
-        :type height: int
-        :param callback: Funkcja wywoływana po kliknięciu przycisku.
-        :type callback: function
+        ...
         """
-        self.rect = pygame.Rect(x, y, width, height)  # Tworzy prostokąt reprezentujący obszar przycisku
-        self.color = (100, 100, 250)  # Ustawia kolor przycisku (szary odcień niebieskiego)
-        self.text = text  # Przechowuje tekst do wyświetlenia na przycisku
-        self.font = pygame.font.SysFont(None, 36)  # Ustawia czcionkę tekstu
-        self.callback = callback  # Przechowuje funkcję callback do wywołania po kliknięciu
+        self.rect = pygame.Rect(x, y, width, height)
+        self.color = color
+        self.text = text
+        self.font = pygame.font.SysFont(None, 36)
+        self.callback = callback
+        self.is_pressed = False
+        self.hovered = False  # Nowy atrybut
+        self.base_color = color  # Zachowaj bazowy kolor
+        self.hover_color_offset = hover_color_offset
+        self.clicked_color_offset = clicked_color_offset
 
-    # "Rysowanie" przycisku
     def draw(self, surface):
         """
         Rysuje przycisk na danej powierzchni.
-
-        :param surface: Powierzchnia, na której ma zostać narysowany przycisk.
-        :type surface: pygame.Surface
+        ...
         """
-        pygame.draw.rect(surface, self.color, self.rect)  # Rysuje prostokąt wypełniony kolorem
-        text_surf = self.font.render(self.text, True, (255, 255, 255))  # Renderuje tekst na powierzchni
-        text_rect = text_surf.get_rect(center=self.rect.center)  # Wyśrodkowuje prostokąt tekstu na prostokącie przycisku
-        surface.blit(text_surf, text_rect)  # Wyświetla tekst na powierzchni przycisku
+        draw_color = self.color
+        if self.hovered:
+            draw_color = self.adjust_color(self.base_color, self.hover_color_offset) # Użyj self.base_color
+            if self.is_pressed:
+                draw_color = self.adjust_color(self.base_color, self.clicked_color_offset) # Użyj self.base_color
+        pygame.draw.rect(surface, draw_color, self.rect)
+        text_surf = self.font.render(self.text, True, (255, 255, 255))
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        surface.blit(text_surf, text_rect)
 
     def handle_event(self, event):
         """
         Obsługuje zdarzenia związane z przyciskiem, takie jak kliknięcia myszy.
-
-        :param event: Zdarzenie do obsłużenia.
-        :type event: pygame.event.Event
         """
-        if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(
-                event.pos):  # Sprawdza, czy nastąpiło kliknięcie myszy wewnątrz obszaru przycisku
-            self.callback()  # Wywołuje funkcję callback, jeśli przycisk został kliknięty
+        if event.type == pygame.MOUSEMOTION:
+            if self.rect.collidepoint(event.pos):
+                self.hovered = True
+            else:
+                self.hovered = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(event.pos):
+                self.is_pressed = True
+                return True
+        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            if self.is_pressed and self.rect.collidepoint(event.pos):
+                self.callback()
+                self.is_pressed = False
+                return True
+            else:
+                self.is_pressed = False
+        return False
+
+    def adjust_color(self, color, offset):
+        """
+        Modyfikuje kolor, nie przekraczając zakresu 0-255.
+        """
+        r, g, b = color
+        r = max(0, min(255, r - offset))
+        g = max(0, min(255, g - offset))
+        b = max(0, min(255, b - offset))
+        return (r, g, b)
