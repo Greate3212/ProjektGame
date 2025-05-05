@@ -1,6 +1,7 @@
 # Import override'a
-# Override — to nadpisywanie funkcji, w klasie bazowej istnieje funkcja, ale ci się nie podoba?
-# Jeb override i robisz własną nową.
+# Override — to nadpisywanie funkcji.
+# W klasie bazowej istnieje funkcja, ale ci się nie podoba?
+# Jeb override i nadpisujesz własną nową.
 from typing_extensions import override
 
 # Importowanie klas
@@ -16,6 +17,7 @@ class Player(Entity):
     — Obiekt/klasę jego poziomu
     — Obiekt/klasę jego ekwipunku
     """
+
     # Konstruktor
     def __init__(self, name, hp, armor_lvl, damage):
         super().__init__(name, hp, armor_lvl, damage)
@@ -36,6 +38,9 @@ class Player(Entity):
             self.hp = 0
             self.dead = True
 
-
-
-
+    def heal_hp(self):
+        if self.inventory.have_heal():
+            if self.hp + self.inventory.heal_amount() >= self.max_hp:
+                self.hp = self.max_hp
+            else:
+                self.hp += self.inventory.heal_amount()
