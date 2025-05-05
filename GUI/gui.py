@@ -1,6 +1,5 @@
-# Import biblioteki odpowiedzialnej za GUI
+# Import biblioteki odpowiedzialnej za GUI i za grę
 import sys
-
 import pygame
 
 

@@ -1,5 +1,5 @@
 # Import klasy
-from entity import Entity
+from Entities.entity import Entity
 
 
 class Enemy(Entity):

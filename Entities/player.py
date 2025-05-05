@@ -5,9 +5,9 @@
 from typing_extensions import override
 
 # Importowanie klas
-from entity import Entity
-from inventory import Inventory
-from level_handler import Level
+from Entities.entity import Entity
+from Entities.inventory import Inventory
+from Entities.level_handler import Level
 
 
 class Player(Entity):
