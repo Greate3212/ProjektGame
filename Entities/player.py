@@ -12,7 +12,7 @@ from level_handler import Level
 
 class Player(Entity):
     """
-    Klasa dziedzicząca entity. Odpowiada za przetrzymywanie informacji na temat gracza.
+    Klasa dziedzicząca po klasie Entity. Odpowiada za przetrzymywanie informacji na temat gracza.
     Informacji takich jak:
     — Obiekt/klasę jego poziomu
     — Obiekt/klasę jego ekwipunku
@@ -20,27 +20,44 @@ class Player(Entity):
 
     # Konstruktor
     def __init__(self, name, hp, armor_lvl, damage):
-        super().__init__(name, hp, armor_lvl, damage)
-        self.level = Level()
-        self.inventory = Inventory()
+        """
+        Inicjalizuje obiekt Player.
+
+        :param name: Nazwa gracza.
+        :type name: str
+        :param hp: Początkowa ilość punktów życia gracza.
+        :type hp: int
+        :param armor_lvl: Poziom pancerza gracza.
+        :type armor_lvl: int
+        :param damage: Obrażenia zadawane przez gracza.
+        :type damage: int
+        """
+        super().__init__(name, hp, armor_lvl, damage)  # Wywołuje konstruktor klasy bazowej (Entity)
+        self.level = Level()  # Tworzy obiekt Level dla gracza, zarządzający jego poziomem i doświadczeniem
+        self.inventory = Inventory()  # Tworzy obiekt Inventory dla gracza, zarządzający jego ekwipunkiem
 
     @override
     def take_damage(self, amount):
         """
         Nadpisanie funkcji odpowiedzialnej za zadawanie obrażeń.
         Nadpisałem, bo gracz ma dodatkowy armor zależny od zbroi.
-        :param amount:
+
+        :param amount: Ilość obrażeń.
         :return:
         """
         if self.hp - amount >= 0:
-            self.hp = self.hp - int((amount / (self.armor_lvl + self.inventory.armor_level)))
+            self.hp = self.hp - int(
+                (amount / (self.armor_lvl + self.inventory.armor_level)))  # Oblicza obrażenia, uwzględniając pancerz gracza i dodatkowy pancerz z ekwipunku
         else:
-            self.hp = 0
-            self.dead = True
+            self.hp = 0  # Ustawia hp na 0, jeśli obrażenia są większe niż aktualne hp
+            self.dead = True  # Ustawia flagę martwego na True
 
     def heal_hp(self):
-        if self.inventory.have_heal():
+        """
+        Funkcja odpowiedzialna za leczenie gracza.
+        """
+        if self.inventory.have_heal():  # Sprawdza, czy gracz posiada przedmioty leczące
             if self.hp + self.inventory.heal_amount() >= self.max_hp:
-                self.hp = self.max_hp
+                self.hp = self.max_hp  # Jeśli leczenie przywróciłoby więcej niż max hp, ustaw hp na max hp
             else:
-                self.hp += self.inventory.heal_amount()
+                self.hp += self.inventory.heal_amount()  # Dodaje ilość hp przywracaną przez przedmiot leczący
