@@ -25,7 +25,7 @@ class Checkbox:
         :type checked_color: tuple (RGB)
         :param font_size: Rozmiar czcionki tekstu (domyślnie 36).
         :type font_size: int
-        :param font_name: Nazwa czcionki (domyślnie None - czcionka systemowa).
+        :param font_name: Nazwa czcionki (domyślnie None — czcionka systemowa).
         :type font_name: str
         :param initial_checked: Początkowy stan zaznaczenia (domyślnie False).
         :type initial_checked: bool

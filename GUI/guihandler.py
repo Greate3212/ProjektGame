@@ -1,5 +1,5 @@
 from GUI.button import Button
-from GUI.checkbox import Checkbox  # Importujemy klasę Checkbox
+from GUI.checkbox import Checkbox
 from GUI.gui import GUI
 from GUI.label import Label
 from typing import List, Tuple, Optional, Callable

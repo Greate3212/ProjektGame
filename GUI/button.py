@@ -90,7 +90,7 @@ class Button:
 
         :param color: Kolor do zmodyfikowania.
         :type color: tuple (RGB)
-        :param offset: Wartość offsetu (dodatnia - jaśniejszy, ujemna - ciemniejszy).
+        :param offset: Wartość offsetu (dodatnia — jaśniejszy, ujemna — ciemniejszy).
         :type offset: int
         :return: Zmodyfikowany kolor.
         :rtype: tuple (RGB)

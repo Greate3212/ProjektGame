@@ -1,5 +1,7 @@
 import sys
+
 import pygame
+
 
 class GUI:
     """
@@ -49,7 +51,8 @@ class GUI:
         pygame.quit()  # Zamknięcie Pygame
         sys.exit()  # Zamknięcie programu
 
-    def toggle_fullscreen(self, a) -> None:  # TODO: Dodać type hinting dla argumentu 'a' (event?)
+    def toggle_fullscreen(self, a) -> None:
+        # TODO: Dodać type hinting dla argumentu 'a' (event?) Zmienna, a zwraca pozycje check boxa (włączony, wyłączony)
         """
         Przełącza między trybem pełnoekranowym a oknem.
         """

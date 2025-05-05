@@ -43,8 +43,6 @@ def game_start():
 
 
 def change_settings(a):
-    global s_created, m_created
-    s_created, m_created = False, False
     window.toggle_fullscreen("")
     pygame.time.delay(200)
     settings()
