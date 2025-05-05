@@ -1,4 +1,4 @@
-# Project Game (WIP)
+# Project Game (WIP) v0.0.1
 
 ## List of content:
 
