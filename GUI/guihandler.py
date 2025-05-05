@@ -1,7 +1,7 @@
-from GUI.button import Button
-from GUI.checkbox import Checkbox
+from GUI.GUIElements.button import Button
+from GUI.GUIElements.checkbox import Checkbox
 from GUI.gui import GUI
-from GUI.label import Label
+from GUI.GUIElements.label import Label
 from typing import List, Tuple, Optional, Callable
 import pygame
 
