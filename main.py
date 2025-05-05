@@ -9,7 +9,7 @@ def start():
     W funkcji tej są uruchamiane wszystkie wymagane procesy/klasy do uruchomienia gry.
     :return:
     """
-    gui = GUI("Game", 800, 600)  # Tworzy obiekt GUI (okno gry) o nazwie "Game" i wymiarach 800x600
+    gui = GUI("Project Game", 800, 600)  # Tworzy obiekt GUI (okno gry) o nazwie "Game" i wymiarach 800x600
     return gui  # Zwraca utworzony obiekt GUI
 
 
@@ -19,28 +19,22 @@ Opened - zmienna przechowująca informacje jakie okno aktualnie jest otwarte:
  - 0 - main menu
  - 1 - settings
 """
-m_created = False
-s_created = False
+
 
 def main_menu():
-    global opened, m_created
+    global opened
     opened = 0
 
-    if not m_created:
-        # Funkcja/okienko menu głównego oraz jego wszystkie elementy
-        main_menu_handler.add_label("Project Game", get_center_x(150), (600 - 100) - 450, 150, 80, font_size=55,
-                                    font_name="Comic Sans MS")
-
-        main_menu_handler.add_button("Start", get_center_x(200), (600 - 100) - 200, 200, 100,
-                                     game_start)  # Dodaje przycisk "Start" do GUIHandler. Po kliknięciu wywoływana jest funkcja game_start
-        main_menu_handler.add_button("Settings", get_center_x(200), (600 - 90) - 100, 200, 90, settings)
-        main_menu_handler.add_button("Exit", get_center_x(200), (600 - 80) - 10, 200, 80, window.close_window)
-
-        main_menu_handler.add_label("v0.0.1", get_center_x(50) + 400 - 20, (600 - 20), 50, 25, font_size=15,
-                                    font_name="Corbel")
-        m_created = True
-    else:
-        pass
+    main_menu_handler.clear_all()  # Wyczyść stare elementy
+    # Funkcja/okienko menu głównego oraz jego wszystkie elementy
+    main_menu_handler.add_label("Project Game", get_center_x(150), get_y_res(100) - 450, 150, 80, font_size=55,
+                                font_name="Comic Sans MS")
+    main_menu_handler.add_button("Start", get_center_x(200), get_y_res(100) - 200, 200, 100,
+                                 game_start)  # Dodaje przycisk "Start" do GUIHandler. Po kliknięciu wywoływana jest funkcja game_start
+    main_menu_handler.add_button("Settings", get_center_x(200), get_y_res(90) - 100, 200, 90, settings)
+    main_menu_handler.add_button("Exit", get_center_x(200), get_y_res(80) - 10, 200, 80, window.close_window)
+    main_menu_handler.add_label("v0.0.1", get_center_x(50) + 400 - 20, get_y_res(20), 50, 25, font_size=15,
+                                font_name="Corbel")
 
 
 def game_start():
@@ -48,23 +42,36 @@ def game_start():
     print("START!")
 
 
+def change_settings(a):
+    global s_created, m_created
+    s_created, m_created = False, False
+    window.toggle_fullscreen("")
+    pygame.time.delay(200)
+    settings()
+    window.screen.fill((0, 0, 0))
+    main_menu_handler.draw_all()
+    window.refresh_screen()
+
+
 def settings():
-    global opened, s_created
+    global opened
     opened = 1
     # Funkcja wywoływana po wsciśnięciu przycisku 'settings' w menu głównym
+    main_menu_handler.clear_all()  # Wyczyść stare elementy
+    main_menu_handler.add_label("Settings", get_center_x(150), get_y_res(550), 150, 100, font_size=55,
+                                font_name="Comic Sans MS")
+    main_menu_handler.add_checkbox("Fullscreen", get_center_x(200), get_y_res(450), callback=change_settings)
+    main_menu_handler.add_button("Back", get_center_x(150), get_y_res(80), 150, 70, main_menu)
 
-    if not s_created:
-        settings_handler.add_label("Settings", get_center_x(150), (600 - 550), 150, 100, font_size=55,
-                                   font_name="Comic Sans MS")
-        settings_handler.add_button("Back", get_center_x(150), (600 - 80), 150, 70, main_menu)
-        s_created = True
-    else:
-        pass
+
+def get_y_res(height):
+    return window.screen.get_height() - height
 
 
 def get_center_x(width):
     # Funkcja zwracająca centralną pozycję względem osi x w oknie pycharm
-    return (800 - width) // 2
+    window_width = window.screen.get_width()
+    return (window_width - width) // 2
 
 
 if __name__ == "__main__":
@@ -75,7 +82,7 @@ if __name__ == "__main__":
     # Obiekt odpowiedzialny za elementy GUI
     main_menu_handler = GUIHandler(window)  # Tworzy obiekt GUIHandler, który zarządza elementami GUI w oknie
 
-    settings_handler = GUIHandler(window)
+    settings_handler = None
     # Dodawnie elemntów GUI main menu
     main_menu()
 
@@ -92,18 +99,12 @@ if __name__ == "__main__":
                 # Uruchomienie funkcji wyłączającej gry
                 window.close_window()  # Wywołuje metodę close_window() obiektu GUI, aby zamknąć okno
 
-            if opened == 0:
-                # Sprawdza, czy elementy GUI są wciskane.
-                main_menu_handler.handle_events(
-                    event)  # Przekazuje zdarzenie do GUIHandler, który obsługuje zdarzenia dla elementów GUI (np. przycisków)
-            elif opened == 1:
-                settings_handler.handle_events(event)
+            # Sprawdza, czy elementy GUI są wciskane.
+            main_menu_handler.handle_events(
+                event)  # Przekazuje zdarzenie do GUIHandler, który obsługuje zdarzenia dla elementów GUI (np. przycisków)
 
-        if opened == 0:
-            # "Rysowanie" okienka menu
-            main_menu_handler.draw_all()  # Wywołuje metodę draw_all() obiektu GUIHandler, aby narysować wszystkie elementy GUI (np. przyciski) na ekranie
-        elif opened == 1:
-            # "Rysowanie" okienka ustawień
-            settings_handler.draw_all()
+        # "Rysowanie" okienka menu
+        main_menu_handler.draw_all()  # Wywołuje metodę draw_all() obiektu GUIHandler, aby narysować wszystkie elementy GUI (np. przyciski) na ekranie
+
         # Odświeżanie ekranu
         window.refresh_screen()  # Wywołuje metodę refresh_screen() obiektu GUI, aby odświeżyć ekran i wyświetlić zmiany

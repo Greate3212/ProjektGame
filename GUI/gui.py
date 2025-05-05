@@ -1,59 +1,62 @@
-# Import biblioteki odpowiedzialnej za GUI i za grę
 import sys
 import pygame
 
-
 class GUI:
     """
-    Klasa odpowiedzialna za tworzenie, odświeżanie i zamykanie GUI
+    Klasa odpowiedzialna za tworzenie, odświeżanie i zamykanie okna GUI.
     """
 
-    # Konstruktor
-    def __init__(self, window_name, width, height):
+    def __init__(self, window_name: str, width: int, height: int):
         """
         Inicjalizuje obiekt GUI.
 
         :param window_name: Nazwa okna GUI.
         :type window_name: str
-        :param width: Szerokość okna GUI.
+        :param width: Początkowa szerokość okna GUI.
         :type width: int
-        :param height: Wysokość okna GUI.
+        :param height: Początkowa wysokość okna GUI.
         :type height: int
         """
-        self.window_name = window_name  # Przechowuje nazwę okna
-        self.width = width  # Przechowuje szerokość okna
-        self.height = height  # Przechowuje wysokość okna
-        self.running = False  # Flaga wskazująca, czy GUI jest uruchomione
+        self.window_name = window_name  # Nazwa okna
+        self.width = width  # Szerokość okna
+        self.height = height  # Wysokość okna
+        self.running = False  # Czy GUI jest uruchomione?
+        self.fullscreen = False  # Czy tryb pełnoekranowy jest włączony?
+        self.screen = None  # Powierzchnia okna (tworzona w create_window)
+        self.clock = pygame.time.Clock()  # Zegar do kontrolowania FPS
 
-        # Tworzenie pustych zmiennych, które są przypisywane potem w create window
-        self.screen = None  # Powierzchnia okna (będzie utworzona później)
-        self.clock = pygame.time.Clock()  # Obiekt zegara do kontrolowania liczby klatek na sekundę
+    def create_window(self) -> None:
+        """
+        Tworzy okno GUI o zadanych wymiarach i nazwie.
+        """
+        pygame.init()  # Inicjalizacja Pygame
+        pygame.display.set_caption(self.window_name)  # Ustawienie nazwy okna
+        self.screen = pygame.display.set_mode((self.width, self.height))  # Tworzenie okna
+        self.running = True  # Ustawienie flagi uruchomienia
 
-    def create_window(self):
+    def refresh_screen(self) -> None:
         """
-        Funkcja odpowiedzialna za tworzenie okna, o odpowiednich zmiennych/ustawieniach
-        :return:
+        Odświeża całą powierzchnię okna.
         """
-        pygame.init()  # Inicjalizuje bibliotekę Pygame
-        pygame.display.set_caption(self.window_name)  # Ustawia tytuł okna
-        self.screen = pygame.display.set_mode((self.width, self.height))  # Tworzy okno o podanych wymiarach
-        self.clock = pygame.time.Clock()  # Inicjalizuje zegar
-        self.running = True  # Ustawia flagę uruchomienia na True, wskazując, że GUI jest uruchomione
+        pygame.display.flip()  # Aktualizacja ekranu
+        self.clock.tick(60)  # Kontrola FPS (60 klatek na sekundę)
 
-    def refresh_screen(self):
+    def close_window(self) -> None:
         """
-        Funkcja odpowiedzialna za odświeżanie okna.
-        Odświeża okno, za każdym razem, gdy coś zostanie dodane do okna, trzeba go odświeżyć.
-        :return:
+        Zamyka okno GUI i kończy działanie Pygame.
         """
-        pygame.display.flip()  # Aktualizuje całą powierzchnię okna
-        self.clock.tick(60)  # Kontroluje liczbę klatek na sekundę (FPS) na 60
+        self.running = False  # Ustawienie flagi uruchomienia na False
+        pygame.quit()  # Zamknięcie Pygame
+        sys.exit()  # Zamknięcie programu
 
-    def close_window(self):
+    def toggle_fullscreen(self, a) -> None:  # TODO: Dodać type hinting dla argumentu 'a' (event?)
         """
-        Funkcja odpowiedzialna za zamykanie okna.
-        :return:
+        Przełącza między trybem pełnoekranowym a oknem.
         """
-        self.running = False  # Ustawia flagę uruchomienia na False, wskazując, że GUI ma zostać zamknięte
-        pygame.quit()  # Zamyka bibliotekę Pygame
-        sys.exit() # Wyłącza grę
+        self.fullscreen = not self.fullscreen  # Zmiana stanu flagi fullscreen
+        if self.fullscreen:
+            # Ustawienie trybu pełnoekranowego
+            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        else:
+            # Ustawienie trybu oknowego
+            self.screen = pygame.display.set_mode((self.width, self.height))
